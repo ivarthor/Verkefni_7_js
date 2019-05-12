@@ -1,0 +1,51 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="stilsida.css">
+    </head>
+    <body>
+        <form class="leita">
+            <input type="text" class="leitari">
+            <ul class="listi">
+                <li>filter</li>
+            </ul>
+        </form>
+        <script>
+            // Gaf mér sjálfum of stuttan tíma fyrir þetta verkefni
+            const url = 'https://apis.is/concerts'; // url-ið sem ég þarf til að vísa að gögnunum
+            const concerts = []; // bý til tómt array til að setja gögnin í
+
+            fetch(url) // næ í gögnin
+                .then(gogn => gogn.json()) //  skila response-i í json formatti
+                .then(data => concerts.push(...data.results)) // set gögnin inn í concerts array-ið með spread
+
+            function leit(ord, concerts) { // fall sem filterar gögnin með leitunar orðinu okkar
+                return concerts.filter(nafn => { // skilar nýju array frá gögnunum
+
+                    const regex = new RegExp(ord, 'gi'); // bý til regular expression svo að ég geti notað breytu inní .match()
+                    return nafn.eventDateName.match(regex) // set inn breytuna sem ég var að gera til að setja inn í nýja array-ið allt sem passar við hvað sem er í þessari breytu
+                });
+            }
+
+
+            function display() { // fallið sem setur allt inn í html-ið
+                const fundin = leit(this.value, concerts); // set allt sem passar inn í breytu
+                const html = fundin.map(nafn => { // fer yfir allt sem passar og skila html kóða sem ég set inn í html-ið til að framkalla listann af gögnunum 
+                    return ` 
+                        <li>
+                            <a class ="mynd" href="index2.html"><img src=${nafn.imageSource}></a> 
+                            <span class="name">${nafn.eventDateName}</span>
+                        </li>
+                    `;
+                }).join(" "); // tek út bilin
+                suggestions.innerHTML = html; // set allt html-ið inn í listann
+            }
+
+
+            let searchInput = document.querySelector('.leitari'); // bý til breytu úr .leitari classanum
+            let suggestions = document.querySelector('.listi'); // bý til breytu úr .listi classanum
+
+            searchInput.addEventListener('keyup', display); // fylgjist með hvort að notandinn er búinn að skrifa eitthvað. Ef svo þá keyri ég display fallið
+        </script>
+    </body>
+</html>
